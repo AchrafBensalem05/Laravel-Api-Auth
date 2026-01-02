@@ -71,6 +71,29 @@ Content-Type: application/json
 }
 
 ### =============================================
+### Password Reset Endpoints
+### =============================================
+
+### Request password reset (sends email)
+POST {{baseUrl}}/auth/forgot-password
+Content-Type: application/json
+
+{
+    "email": "user2@example.com"
+}
+
+### Reset password with token (get token from email)
+POST {{baseUrl}}/auth/reset-password
+Content-Type: application/json
+
+{
+    "email": "user2@example.com",
+    "token": "YOUR_RESET_TOKEN_FROM_EMAIL",
+    "password": "newpassword123",
+    "password_confirmation": "newpassword123"
+}
+
+### =============================================
 ### Protected Endpoints (Replace YOUR_TOKEN_HERE with actual token)
 ### =============================================
 

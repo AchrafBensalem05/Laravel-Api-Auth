@@ -6,6 +6,7 @@ A complete Laravel API authentication system with JWT tokens and role-based acce
 
 - **JWT Authentication** using `tymon/jwt-auth`
 - **User Registration & Login** with automatic token generation
+- **Password Reset via Email** with secure token validation
 - **Role-based Access Control** (User, Admin, Superadmin)
 - **Custom Middleware** for role protection
 - **Clean Code Architecture** with Services, Requests, and Resources
@@ -77,7 +78,19 @@ DB_PASSWORD=
 php artisan migrate
 ```
 
-6. **Start the server**
+6. **Configure email settings (optional)**
+For password reset emails, update your `.env` file:
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=your-smtp-host
+MAIL_PORT=587
+MAIL_USERNAME=your-email@example.com
+MAIL_PASSWORD=your-email-password
+MAIL_FROM_ADDRESS="noreply@yourapp.com"
+MAIL_FROM_NAME="Your App Name"
+```
+
+7. **Start the server**
 ```bash
 php artisan serve
 ```
@@ -93,6 +106,8 @@ The API will be available at: `http://localhost:8000/api`
 | POST | `/api/auth/register` | Register new user & auto-login | No |
 | POST | `/api/auth/login` | Login user | No |
 | POST | `/api/auth/logout` | Logout user | Yes |
+| POST | `/api/auth/forgot-password` | Request password reset email | No |
+| POST | `/api/auth/reset-password` | Reset password with token | No |
 
 ### Protected Endpoints
 
@@ -149,6 +164,29 @@ Content-Type: application/json
 }
 ```
 
+### Request Password Reset
+```http
+POST http://localhost:8000/api/auth/forgot-password
+Content-Type: application/json
+
+{
+    "email": "user@example.com"
+}
+```
+
+### Reset Password
+```http
+POST http://localhost:8000/api/auth/reset-password
+Content-Type: application/json
+
+{
+    "email": "user@example.com",
+    "token": "reset_token_from_email",
+    "password": "newpassword123",
+    "password_confirmation": "newpassword123"
+}
+```
+
 ### Access protected endpoints
 ```http
 GET http://localhost:8000/api/admin/dashboard
@@ -172,6 +210,19 @@ The JWT token contains:
 - `user_id`: User's database ID
 - `name`: User's name
 - Standard JWT claims (iat, exp, etc.)
+
+### Password Reset Flow
+
+1. **Request Reset**: User provides email to `/api/auth/forgot-password`
+2. **Email Sent**: System sends reset token via email (if email exists)
+3. **Reset Password**: User uses token from email with new password at `/api/auth/reset-password`
+4. **Token Expires**: Reset tokens expire after 24 hours
+
+**Security Features:**
+- Tokens are hashed before storage
+- Generic response messages (prevent email enumeration)
+- 24-hour token expiration
+- Single-use tokens (deleted after use)
 
 ### Response Examples
 
