@@ -61,8 +61,14 @@ class PasswordResetController extends Controller
 
         // Update user password
         $user = User::where('email', $request->email)->first();
+        
+        if (!$user) {
+            DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+        
         $user->update([
-            'password' => Hash::make($request->password)
+            'password' => $request->password // Password will be hashed by the model cast
         ]);
 
         // Delete the reset token
