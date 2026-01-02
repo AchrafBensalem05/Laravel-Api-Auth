@@ -1,52 +1,258 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel API Authentication with JWT & Roles
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A complete Laravel API authentication system with JWT tokens and role-based access control. This project demonstrates clean code architecture with Services, Requests, Resources, and custom middleware.
 
-## About Laravel
+## 🚀 Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **JWT Authentication** using `tymon/jwt-auth`
+- **User Registration & Login** with automatic token generation
+- **Role-based Access Control** (User, Admin, Superadmin)
+- **Custom Middleware** for role protection
+- **Clean Code Architecture** with Services, Requests, and Resources
+- **Auto-login after registration**
+- **Comprehensive API testing** with `.http` files
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📁 Project Structure
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   └── Auth/
+│   │       └── AuthController.php        # Authentication endpoints
+│   ├── Middleware/
+│   │   └── RoleMiddleware.php             # Role-based access control
+│   ├── Requests/
+│   │   └── Auth/
+│   │       ├── LoginRequest.php           # Login validation
+│   │       └── RegisterRequest.php        # Registration validation
+│   └── Resources/
+│       └── UserResource.php               # User data formatting
+├── Models/
+│   └── User.php                          # User model with JWT interface
+└── Services/
+    └── AuthService.php                   # Business logic layer
+```
 
-## Learning Laravel
+## 🛠️ Installation & Setup
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Prerequisites
+- PHP 8.2+
+- Composer
+- MySQL/PostgreSQL/SQLite
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Installation Steps
 
-## Laravel Sponsors
+1. **Clone the repository**
+```bash
+git clone https://github.com/AchrafBensalem05/Laravel-Api-Auth.git
+cd Laravel-Api-Auth
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+2. **Install dependencies**
+```bash
+composer install
+```
 
-### Premium Partners
+3. **Environment setup**
+```bash
+cp .env.example .env
+php artisan key:generate
+php artisan jwt:secret
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+4. **Configure database**
+Update your `.env` file with database credentials:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel_auth
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## Contributing
+5. **Run migrations**
+```bash
+php artisan migrate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+6. **Start the server**
+```bash
+php artisan serve
+```
 
-## Code of Conduct
+The API will be available at: `http://localhost:8000/api`
+
+## 📚 API Endpoints
+
+### Authentication Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/api/auth/register` | Register new user & auto-login | No |
+| POST | `/api/auth/login` | Login user | No |
+| POST | `/api/auth/logout` | Logout user | Yes |
+
+### Protected Endpoints
+
+| Method | Endpoint | Description | Required Role |
+|--------|----------|-------------|---------------|
+| GET | `/api/admin/dashboard` | Admin dashboard | Admin or Superadmin |
+| GET | `/api/superadmin/dashboard` | Superadmin dashboard | Superadmin only |
+
+## 🔐 User Roles
+
+- **User** (default): Basic authenticated user
+- **Admin**: Can access admin dashboard
+- **Superadmin**: Can access both admin and superadmin dashboards
+
+## 📝 API Testing
+
+Use the provided `tests/api.http` file with VS Code REST Client extension:
+
+### Register a new user
+```http
+POST http://localhost:8000/api/auth/register
+Content-Type: application/json
+
+{
+    "name": "Test User",
+    "email": "user@example.com",
+    "password": "password",
+    "password_confirmation": "password"
+}
+```
+
+### Register an admin user
+```http
+POST http://localhost:8000/api/auth/register
+Content-Type: application/json
+
+{
+    "name": "Admin User",
+    "email": "admin@example.com",
+    "password": "password",
+    "password_confirmation": "password",
+    "role": "admin"
+}
+```
+
+### Login
+```http
+POST http://localhost:8000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "user@example.com",
+    "password": "password"
+}
+```
+
+### Access protected endpoints
+```http
+GET http://localhost:8000/api/admin/dashboard
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+```
+
+## 🏗️ Architecture Overview
+
+### Clean Code Principles
+
+1. **Service Layer**: Business logic separated in `AuthService`
+2. **Form Requests**: Input validation in dedicated Request classes
+3. **Resources**: Consistent API response formatting
+4. **Middleware**: Role-based access control
+5. **Single Responsibility**: Each class has one clear purpose
+
+### JWT Token Structure
+
+The JWT token contains:
+- `user_id`: User's database ID
+- `name`: User's name
+- Standard JWT claims (iat, exp, etc.)
+
+### Response Examples
+
+**Successful Registration:**
+```json
+{
+    "user": {
+        "id": 1,
+        "name": "Test User",
+        "email": "user@example.com",
+        "role": "user"
+    },
+    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+    "token_type": "bearer",
+    "expires_in": 3600
+}
+```
+
+**Successful Login:**
+```json
+{
+    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+    "token_type": "bearer",
+    "expires_in": 3600
+}
+```
+
+## 🔧 Configuration
+
+### JWT Configuration
+The JWT configuration is located in `config/jwt.php`. Key settings:
+- **TTL**: Token expiration time (default: 60 minutes)
+- **Algorithm**: HMAC SHA256
+- **Custom Claims**: user_id and name included in token
+
+### Auth Configuration
+Updated `config/auth.php` to use JWT as default API guard:
+```php
+'defaults' => [
+    'guard' => 'api',
+],
+
+'guards' => [
+    'api' => [
+        'driver' => 'jwt',
+        'provider' => 'users',
+    ],
+],
+```
+
+## 🧪 Testing
+
+The project includes comprehensive API tests in `tests/api.http`. To test:
+
+1. Start the server: `php artisan serve`
+2. Open `tests/api.http` in VS Code
+3. Install REST Client extension
+4. Run the requests sequentially
+5. Copy tokens from login responses for protected endpoints
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is open-sourced software licensed under the [MIT license](LICENSE).
+
+## 👨‍💻 Author
+
+**Achraf Bensalem**
+- GitHub: [@AchrafBensalem05](https://github.com/AchrafBensalem05)
+- Repository: [Laravel-Api-Auth](https://github.com/AchrafBensalem05/Laravel-Api-Auth)
+
+---
+
+⭐ If you found this project helpful, please give it a star!
 
 In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
