@@ -1,10 +1,10 @@
-# Laravel API Authentication with JWT & Roles
+# Laravel API Authentication with Passport & Roles
 
-A complete Laravel API authentication system with JWT tokens and role-based access control. This project demonstrates clean code architecture with Services, Requests, Resources, and custom middleware.
+A complete Laravel API authentication system using Laravel Passport for API tokens and role-based access control. This project demonstrates clean code architecture with Services, Requests, Resources, and custom middleware.
 
 ## 🚀 Features
 
-- **JWT Authentication** using `tymon/jwt-auth`
+- **API Authentication** using `Laravel Passport`
 - **User Registration & Login** with automatic token generation
 - **Password Reset via Email** with secure token validation
 - **Role-based Access Control** (User, Admin, Superadmin)
@@ -30,7 +30,7 @@ app/
 │   └── Resources/
 │       └── UserResource.php               # User data formatting
 ├── Models/
-│   └── User.php                          # User model with JWT interface
+│   └── User.php                          # User model with Passport API tokens
 └── Services/
     └── AuthService.php                   # Business logic layer
 ```
@@ -59,7 +59,7 @@ composer install
 ```bash
 cp .env.example .env
 php artisan key:generate
-php artisan jwt:secret
+php artisan passport:install
 ```
 
 4. **Configure database**
@@ -204,12 +204,9 @@ Content-Type: application/json
 4. **Middleware**: Role-based access control
 5. **Single Responsibility**: Each class has one clear purpose
 
-### JWT Token Structure
+### Token Structure
 
-The JWT token contains:
-- `user_id`: User's database ID
-- `name`: User's name
-- Standard JWT claims (iat, exp, etc.)
+The API access token contains identifying claims for the authenticated user. When using Passport personal access tokens the token is an opaque string backed by the OAuth access token tables. You may also use Passport's JWT features for cookie-based APIs.
 
 ### Password Reset Flow
 
@@ -252,14 +249,10 @@ The JWT token contains:
 
 ## 🔧 Configuration
 
-### JWT Configuration
-The JWT configuration is located in `config/jwt.php`. Key settings:
-- **TTL**: Token expiration time (default: 60 minutes)
-- **Algorithm**: HMAC SHA256
-- **Custom Claims**: user_id and name included in token
+### Auth Configuration (Passport)
 
-### Auth Configuration
-Updated `config/auth.php` to use JWT as default API guard:
+This project uses Laravel Passport for API authentication. The API guard in `config/auth.php` is set to use the `passport` driver:
+
 ```php
 'defaults' => [
     'guard' => 'api',
@@ -267,7 +260,7 @@ Updated `config/auth.php` to use JWT as default API guard:
 
 'guards' => [
     'api' => [
-        'driver' => 'jwt',
+        'driver' => 'passport',
         'provider' => 'users',
     ],
 ],

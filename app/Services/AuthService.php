@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 
 class AuthService
 {
@@ -18,15 +20,25 @@ class AuthService
 
     public function login(array $credentials): ?string
     {
-        if (! $token = auth()->attempt($credentials)) {
+        // Attempt to find the user and verify the password
+        $user = User::where('email', $credentials['email'] ?? null)->first();
+
+        if (! $user || ! Hash::check($credentials['password'] ?? '', $user->password)) {
             return null;
         }
 
-        return $token;
+        // Create a personal access token for the user
+        $tokenResult = $user->createToken('api-token');
+
+        return $tokenResult->accessToken ?? $tokenResult->plainTextToken ?? null;
     }
 
     public function logout(): void
     {
-        auth()->logout();
+        $user = auth()->user();
+
+        if ($user && $user->token()) {
+            $user->token()->revoke();
+        }
     }
 }

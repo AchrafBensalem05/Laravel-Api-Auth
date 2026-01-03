@@ -11,10 +11,11 @@
 ### Register a new user (default role: user)
 POST {{baseUrl}}/auth/register
 Content-Type: application/json
+Accept: application/json
 
 {
-    "name": "Test2 User",
-    "email": "user2@example.com",
+    "name": "Test User",
+    "email": "user2d1@example.com",
     "password": "password",
     "password_confirmation": "password"
 }
@@ -22,10 +23,11 @@ Content-Type: application/json
 ### Register an admin user
 POST {{baseUrl}}/auth/register
 Content-Type: application/json
+Accept: application/json
 
 {
     "name": "Admin User",
-    "email": "admin@example.com",
+    "email": "admin2@example.com",
     "password": "password",
     "password_confirmation": "password",
     "role": "admin"
@@ -34,10 +36,11 @@ Content-Type: application/json
 ### Register a superadmin user
 POST {{baseUrl}}/auth/register
 Content-Type: application/json
+Accept: application/json
 
 {
     "name": "Super Admin",
-    "email": "superadmin@example.com",
+    "email": "superad2min@example.com",
     "password": "password",
     "password_confirmation": "password",
     "role": "superadmin"
@@ -46,28 +49,44 @@ Content-Type: application/json
 ### Login as user
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
+Accept: application/json
 
 {
-    "email": "user@example.com",
+    "email": "user2d1@example.com",
     "password": "password"
 }
 
 ### Login as admin
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
+Accept: application/json
 
 {
-    "email": "admin@example.com",
+    "email": "admin2@example.com",
     "password": "password"
 }
 
 ### Login as superadmin
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
+Accept: application/json
 
 {
     "email": "superadmin@example.com",
     "password": "password"
+}
+
+### =============================================
+### Social Login Endpoint
+### =============================================
+
+### Social Login with Firebase
+POST {{baseUrl}}/auth/social-login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "token": "FIREBASE_ID_TOKEN"
 }
 
 ### =============================================
@@ -77,6 +96,7 @@ Content-Type: application/json
 ### Request password reset (sends email)
 POST {{baseUrl}}/auth/forgot-password
 Content-Type: application/json
+Accept: application/json
 
 {
     "email": "user2@example.com"
@@ -85,6 +105,7 @@ Content-Type: application/json
 ### Reset password with token (get token from email)
 POST {{baseUrl}}/auth/reset-password
 Content-Type: application/json
+Accept: application/json
 
 {
     "email": "user2@example.com",
@@ -97,12 +118,13 @@ Content-Type: application/json
 ### Protected Endpoints (Replace YOUR_TOKEN_HERE with actual token)
 ### =============================================
 
-@token = YOUR_TOKEN_HERE
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIwMTliODI4OC05MTY2LTcyZjktODk1Mi0xY2M2Y2JhZmU5MjMiLCJqdGkiOiJjZWVmZTc5OTY4M2VhMzhhZDc0ZGIwYjk5MmYzMzMzMzRkZWFiYTdlYWVhOGRkZDI5NjE2ZmQ1NjljMjVhNzBjNzk4NDZmN2UyMWIwNzJlZCIsImlhdCI6MTc2NzQyMjI2Ny4wODQ0MTcsIm5iZiI6MTc2NzQyMjI2Ny4wODQ0MTgsImV4cCI6MTc5ODk1ODI2Ny4wNzg1MzQsInN1YiI6IjkiLCJzY29wZXMiOltdfQ.HbhHCRB71p1K3AiPoONcoDO-pXwCci1KGICKoaRif5wFQeP2_K4lsLB0JwG--MZR3hNOsSQVX8pC2IjzBkYLWt31c17ok4N6IUff1Afpi00RMA5A4MhobaPVTYFYJlarfpftPRc4t9ibt9Gnb-VjsvSrXRHAdHcvTiYlGp77EB42fEK3Wo96sTR7zztC36aHf2d7eqmufp6GTqV1Lf1eqZPXSSXeh-2aKsJKkhodeEs1rdLr66vemFtMImmYyI9A3CyD3jnorPtOSkoPW9T6ATsEwd7TbBuYiX3zXFVyuSSpSOtfEfKr5DGalRAJKy1B7iZMbHuGx9KizgpHthi5Rv9BCHy-LbdY6vUACN5jH3ALchQBYsXSjK3Ism0GmfLjQgU_1PKXJCq0NGdFn9a2rRJtxPx2gGhexN1Smj0YQeQ3uWExxOrS16bkmsK-Kg409MyYP2ehRvVGlxgCJoT_AG1CvfQhN9sdCZTXWDYCwVYixS6ciGBfFJ5NoNy6G3fO3R7Qnhn5wYerKvlt04D9v_Ie4IeGMkXATEDd2w9pbT97aUpO98Ezo6NDXZMG22veb-Rc3zMDIiMZs_0vSrEmTlLg4iG6j9u11KBf-U3UWoGteMeuyI_vDa5Mvagx-aXHppigU65PDsEwdUasg2DtlIWqG6Li7HI1ccDCXpUZ9hM
 
 ### Logout
 POST {{baseUrl}}/auth/logout
 Authorization: Bearer {{token}}
 Content-Type: application/json
+Accept: application/json
 
 ### =============================================
 ### Role-based Endpoints
@@ -112,8 +134,10 @@ Content-Type: application/json
 GET {{baseUrl}}/admin/dashboard
 Authorization: Bearer {{token}}
 Content-Type: application/json
+Accept: application/json
 
 ### Access Superadmin Dashboard (requires superadmin role only)
 GET {{baseUrl}}/superadmin/dashboard
 Authorization: Bearer {{token}}
 Content-Type: application/json
+Accept: application/json

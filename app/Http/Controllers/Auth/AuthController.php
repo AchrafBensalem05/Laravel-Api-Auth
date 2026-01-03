@@ -21,13 +21,13 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         $user = $this->authService->register($request->validated());
-        $token = auth()->login($user);
+        $tokenResult = $user->createToken('api-token');
 
         return response()->json([
             'user' => new UserResource($user),
-            'access_token' => $token,
+            'access_token' => $tokenResult->accessToken ?? $tokenResult->plainTextToken,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => null,
         ], 201);
     }
 
@@ -54,7 +54,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => null
         ]);
     }
 }
